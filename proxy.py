@@ -1,17 +1,23 @@
+from sys import argv
 from flask import Flask, request, redirect, Response
 import requests
 
 SITE_NAME = 'https://acanban.ga/'
 app = Flask(__name__, static_folder=None)
 
+if len(argv) != 2:
+    print(f'usage: {argv[0]} hostname')
+    exit()
+hostname = argv[1]
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>', methods=['GET', 'OPTIONS', 'HEAD',
                                     'POST', 'PUT', 'PATCH', 'DELETE'])
 def proxy(path):
+    global hostname
     resp = requests.request(
         method=request.method,
-        url=request.url.replace(request.host_url, SITE_NAME),
+        url=request.url.replace(request.host_url, f'https://{hostname}/'),
         headers={key: value for (key, value) in request.headers
                  if key != 'Host'},
         data=request.get_data(),
@@ -25,3 +31,6 @@ def proxy(path):
 
     response = Response(resp.content, resp.status_code, headers)
     return response
+
+if __name__ == '__main__':
+    app.run(host='127.0.0.1', port=42069)
