@@ -1,10 +1,12 @@
 from flask import Flask, request, redirect, Response
 import requests
 
-SITE_NAME = 'https://usth.edu.vn'
+SITE_NAME = 'https://usth.edu.vn/'
 app = Flask(__name__)
 
-@app.route('/<any:path>', methods=['GET','POST'])
+
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>', methods=['GET','POST'])
 def proxy(path):
     print(path)
     global SITE_NAME
