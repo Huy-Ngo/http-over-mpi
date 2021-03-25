@@ -1,8 +1,7 @@
 from sys import argv
 
-from flask import Flask, request, redirect, Response
+from flask import Flask, request, Response
 from mpi4py import MPI
-import requests
 from requests import Request, Session
 
 comm = MPI.COMM_WORLD
