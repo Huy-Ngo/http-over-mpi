@@ -1,11 +1,13 @@
 from sys import argv
 
-from flask import Flask, request, redirect, Response
+from flask import Flask, request, Response
 from mpi4py import MPI
-import requests
 from requests import Request, Session
 
 comm = MPI.COMM_WORLD
+if comm.Get_size() < 2:
+    raise RuntimeError('at least two processes required')
+
 rank = comm.Get_rank()
 if rank == 0:
     if len(argv) != 2:
@@ -36,7 +38,7 @@ if rank == 0:
         return response
 
     app.run(host='127.0.0.1', port=42069)
-else:
+elif rank == 1:
     session = Session()
     while True:
         comm.send(session.send(comm.recv()), dest=0)
