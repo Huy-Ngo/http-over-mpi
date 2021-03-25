@@ -7,18 +7,20 @@ import (
     "strings"
 )
 
-var Host = "en.wikipedia.org/"
+var Host = "usth.edu.vn/"
 
 func root(w http.ResponseWriter, req *http.Request) {
     path := strings.TrimPrefix(req.URL.Path, "/")
     url := Host + path
     resp, err := http.Get("https://" + url)
-    fmt.Print(resp.Status)
+    mimeType := resp.Header.Get("Content-Type")
+    fmt.Println(resp.Status)
     defer resp.Body.Close()
     body, err := ioutil.ReadAll(resp.Body)
     if err != nil {
         panic(err)
     }
+    w.Header().Set("Content-Type", mimeType)
     fmt.Fprintf(w, string(body))
 }
 
